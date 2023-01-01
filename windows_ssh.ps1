@@ -126,12 +126,13 @@ function PasswordLessSSH {
     $remote_ssh_path="C:\ProgramData\ssh"
     # Copy public SSH key to Windows host
     Copy-Item -Path "ssh/id_rsa.pub" -Destination $remote_ssh_path -ToSession $remote_session
+    Wait-Job
 
     Write-Output "[Connecting to the target]..."
     Invoke-Command -Session $remote_session -ScriptBlock {
         Write-Output "[Creating a authorized key with permissions]..."
         # Copy the public key to programdata
-        Get-Content ($remote_ssh_path + "\id_rsa.pub") >> ($remote_ssh_path + "\administrators_authorized_keys")
+        Get-Content ($using:remote_ssh_path + "\id_rsa.pub") >> ($using:remote_ssh_path + "\administrators_authorized_keys")
 
         # Set proper access control on the key
         icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
@@ -140,7 +141,7 @@ function PasswordLessSSH {
         # Restart Services
         Restart-Service -Name sshd -Force
 
-        Remove-Item -Path ($remote_ssh_path + "\id_rsa.pub") -Force
+        Remove-Item -Path ($using:remote_ssh_path + "\id_rsa.pub") -Force
     }
 
     Write-Output "[PASSWORDLESS SSH COMPLETE]..."
