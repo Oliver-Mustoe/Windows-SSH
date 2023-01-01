@@ -139,7 +139,7 @@ function PasswordLessSSH {
         # Restart Services
         Restart-Service -Name sshd -Force
 
-        Remove-Item -Path ($using:remote_ssh_path + "\id_rsa.pub") -Force
+        Remove-Item -Path "C:\ProgramData\ssh\id_rsa.pub" -Force
     }
 
     Write-Output "[PASSWORDLESS SSH COMPLETE]..."
