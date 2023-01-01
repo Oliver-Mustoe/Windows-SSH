@@ -8,7 +8,7 @@ Automate the installation of OpenSSH for a Windows host from a Linux environment
 
 ## Installation
 1. Clone this github repository with ```git clone https://github.com/Oliver-Mustoe/Windows-SSH.git```
-2. ***FROM INSIDE THE DIRECTORY "Windows_SSH"*** Run the bash script with ```bash docker_run.sh```
+2. ***FROM INSIDE THE DIRECTORY "Windows_SSH"*** Run the bash script with ```bash docker_run.sh``` OR make the script executable and run it with ```chmod +x docker_run.sh && ./docker_run.sh```
 3. Follow along with the prompts :)
 4. Use the commands to make sure the SSH agent is functioning:
 ```bash

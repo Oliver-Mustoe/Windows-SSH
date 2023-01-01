@@ -54,13 +54,13 @@ function InstallSSH {
     )
 
     Invoke-Command -Session $remote_session -ScriptBlock {
-        # Install OpenSSH , does not install if ssh key
+        # Install OpenSSH, does not install if ssh key is in the expected directory
         # if (!(Test-Path "C:\ProgramData\ssh\ssh_host_rsa_key")) {
-        if (!(Test-Path ($env:ProgramData + "\ssh\ssh_host_rsa_key"))) {
+        if (!(Test-Path "C:\ProgramData\ssh\ssh_host_rsa_key")) {
             # Grab a OpenSSH release
             $repo="https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.1.0.0p1-Beta/OpenSSH-Win64.zip"
 
-            # Set the repo destination to the temp dir ($env:TMP) plus the zip name
+            # Set the repo destination to the temp dir ($env:TMP) plus the zip name. environmental variable needed since the tmp directory changes on different hosts
             $repo_dest=$env:TMP + "\OpenSSH.zip"
 
             Write-Output "[Downloading SSH]..."
@@ -71,13 +71,14 @@ function InstallSSH {
 
             Write-Output "[Installing SSH]..."
             # Extract the SSH zip to the targets program files environmental variable ($env:)
-            #Expand-Archive -Path $repo_dest -DestinationPath ($env:ProgramFiles)
-            Expand-Archive -Path $repo_dest -DestinationPath $env:ProgramFiles
+            # Expand-Archive -Path $repo_dest -DestinationPath $env:ProgramFiles
+            Expand-Archive -Path $repo_dest -DestinationPath "C:\Program Files"
             
             # Set appropriate exection policy (scope is just process, so once powershell session is closed, will be reset to default)
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Unrestricted -Force
             # Use the SSH install script ("". filename" can be used to run scripts in powershell and bash, who knew *shrug*)
-            . ($env:ProgramFiles + "\OpenSSH-Win64\install-sshd.ps1")
+            # . ($env:ProgramFiles + "\OpenSSH-Win64\install-sshd.ps1")
+            . "C:\Program Files\OpenSSH-Win64\install-sshd.ps1"
 
             Write-Output "[DONE]..."
 
@@ -105,11 +106,10 @@ function InstallSSH {
         Set-ItemProperty "HKLM:\SOFTWARE\Microsoft\PowerShell\1\ShellIds" -Name ConsolePrompting -Value $true
         New-ItemProperty -Path HKLM:\SOFTWARE\OpenSSH -Name Defaultshell -Value "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -PropertyType String -Force
         
-        # Test to ensure that SSH install is complete
+        # Test to ensure that SSH install is complete in the expected directory
         #if (Test-Path "C:\ProgramData\ssh\ssh_host_rsa_key") {
-        if (Test-Path ($env:ProgramData + "\ssh\ssh_host_rsa_key")) {
+        if (Test-Path "C:\ProgramData\ssh\ssh_host_rsa_key") {
             Write-Output "[SSH CONFIG COMPLETE]"
-            $Global:remote_ssh_path=$env:ProgramData + "\ssh"
         }
         else {
             Write-Output "[SSH CONFIG FAILED :(]"
@@ -123,14 +123,15 @@ function PasswordLessSSH {
     )
     
     Write-Output "[Copying public key over to target]..."
+    $remote_ssh_path="C:\ProgramData\ssh"
     # Copy public SSH key to Windows host
-    Copy-Item -Path "ssh/id_rsa.pub" -Destination $Global:remote_ssh_path -ToSession $remote_session
+    Copy-Item -Path "ssh/id_rsa.pub" -Destination $remote_ssh_path -ToSession $remote_session
 
     Write-Output "[Connecting to the target]..."
     Invoke-Command -Session $remote_session -ScriptBlock {
         Write-Output "[Creating a authorized key with permissions]..."
         # Copy the public key to programdata
-        Get-Content ($Global:remote_ssh_path + "\id_rsa.pub") >> ($Global:remote_ssh_path + "\administrators_authorized_keys")
+        Get-Content ($remote_ssh_path + "\id_rsa.pub") >> ($remote_ssh_path + "\administrators_authorized_keys")
 
         # Set proper access control on the key
         icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
@@ -139,7 +140,7 @@ function PasswordLessSSH {
         # Restart Services
         Restart-Service -Name sshd -Force
 
-        Remove-Item -Path ($Global:remote_ssh_path + "\id_rsa.pub") -Force
+        Remove-Item -Path ($remote_ssh_path + "\id_rsa.pub") -Force
     }
 
     Write-Output "[PASSWORDLESS SSH COMPLETE]..."
