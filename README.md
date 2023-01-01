@@ -12,8 +12,8 @@ Automate the installation of OpenSSH for Windows from a Linux environment, and o
 3. Follow along with the prompts :)
 4. Use the commands to make sure the SSH agent is functioning:
 ```bash
-	eval $(ssh-agent)
-	ssh-add -t 20000 # 2000 can be changed to any number you want
+eval $(ssh-agent)
+ssh-add -t 20000 # 2000 can be changed to any number you want
 ```
 
 # Manual-Installation
