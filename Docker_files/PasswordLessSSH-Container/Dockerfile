@@ -15,4 +15,4 @@ RUN Install-Module -Name PSWSMan -Force
 RUN Install-WSMan
 # Creates needed directory structure
 RUN mkdir tmp2 ssh
-# ENTRYPOINT [ "/usr/bin/pwsh" ]
+ENTRYPOINT [ "/usr/bin/pwsh", "-command" ]
