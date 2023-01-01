@@ -27,7 +27,7 @@ function main {
     # 12/31/22
     $user_choice=Read-Host -Prompt "Would you like to also enable passwordless SSH on $remote_ip? [y/N]"
 
-    if ($user_choice.ToUpper() == "Y") {
+    if ($user_choice.ToUpper() -eq "Y") {
         if (Test-Path ssh/id_rsa.pub) {
             Write-Output "[Setting up passwordless SSH on $remote_ip]"
 
@@ -104,7 +104,7 @@ function InstallSSH {
         
         # Test to ensure that SSH install is complete
         #if (Test-Path "C:\ProgramData\ssh\ssh_host_rsa_key") {
-        if (!(Test-Path ($env:ProgramData + "\ssh\ssh_host_rsa_key"))) {
+        if (Test-Path ($env:ProgramData + "\ssh\ssh_host_rsa_key")) {
             Write-Output "[SSH CONFIG COMPLETE]"
             $Global:remote_ssh_path=$env:ProgramData + "\ssh"
         }
