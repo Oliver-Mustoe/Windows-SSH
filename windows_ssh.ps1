@@ -39,6 +39,9 @@ function main {
             Write-Output "ssh $cred_user@$remote_ip"
         }
     }
+    else {
+        Write-Error -Message "NO SSH KEY ON HOST SYSTEM" -RecommendedAction "USE THE COMMAND 'ssh-keygen -t rsa' TO INSTALL SSH KEYS"
+    }
 
 
     # 12/31/22
