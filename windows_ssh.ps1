@@ -28,7 +28,7 @@ function main {
     $user_choice=Read-Host -Prompt "Would you like to also enable passwordless SSH on $remote_ip? [y/N]"
 
     if ($user_choice.ToUpper() -eq "Y") {
-        if (Test-Path ssh/id_rsa.pub) {
+        if (Test-Path "ssh/id_rsa.pub") {
             Write-Output "[Setting up passwordless SSH on $remote_ip]"
 
             PasswordLessSSH -remote_session $remote_session
@@ -38,9 +38,9 @@ function main {
             Write-Output "ssh-add -t 20000 # 2000 can be changed to any number you want"
             Write-Output "ssh $cred_user@$remote_ip"
         }
-    }
-    else {
-        Write-Error -Message "NO SSH KEY ON HOST SYSTEM" -RecommendedAction "USE THE COMMAND 'ssh-keygen -t rsa' TO INSTALL SSH KEYS"
+        else {
+            Write-Output "ERROR: No SSH public key found mount in the container"
+        }
     }
 
 
