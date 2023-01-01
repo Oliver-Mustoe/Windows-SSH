@@ -15,3 +15,14 @@ Automate the installation of OpenSSH for Windows from a Linux environment, and o
 	eval $(ssh-agent)
 	ssh-add -t 20000 # 2000 can be changed to any number you want
 ```
+
+# Manual-Installation
+For Whatever reason, the following can be used to manually complete the commands performed in "docker_run.sh" (Same pre-reqs apply)
+1. Clone this github repository with ```git clone https://github.com/Oliver-Mustoe/Windows-SSH.git```
+2. ***FROM INSIDE THE DIRECTORY "Windows_SSH":***
+```bash
+# Builds container
+sudo docker build -t {INSERT_CONTAINER_NAME_HERE} {PATH_TO_"PasswordLessSSH-Container"_DIR}
+# Runs the container
+sudo docker run -it --mount type=bind,src={PATH_TO_"windows_ssh.ps1"},dst=/tmp2 --mount type=bind,src={PATH_TO_RSA_KEY_PAIR},dst=/ssh powershell-ntlm /tmp2/windows_ssh.ps1
+```
