@@ -26,3 +26,8 @@ sudo docker build -t {INSERT_CONTAINER_NAME_HERE} {PATH_TO_"PasswordLessSSH-Cont
 # Runs the container
 sudo docker run -it --mount type=bind,src={PATH_TO_"windows_ssh.ps1"},dst=/tmp2 --mount type=bind,src={PATH_TO_RSA_KEY_PAIR},dst=/ssh powershell-ntlm /tmp2/windows_ssh.ps1
 ```
+3. Use the commands to make sure the SSH agent is functioning:
+```bash
+eval $(ssh-agent)
+ssh-add -t 20000 # 2000 can be changed to any number you want
+```
