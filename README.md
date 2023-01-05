@@ -8,6 +8,9 @@
 ## Project Description
 Automate the installation of OpenSSH for a Windows host from a Linux environment, and optionally, setup passwordless SSH on the Windows host for ONE Linux host
 
+**TESTED ON:**
+- Windows Server 2019
+
 ## Prerequisites
 1. A sudo user with an RSA key pair (run ```ssh-keygen -t rsa```)
 2. Docker installed
