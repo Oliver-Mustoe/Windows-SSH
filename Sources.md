@@ -147,8 +147,6 @@ Below are all of the sources I made use of during this project (in no particular
     
 -   [https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/rename-item?view=powershell-7.3](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/rename-item?view=powershell-7.3)
 
-- 
-
 -   [https://superuser.com/questions/1476553/passwordless-ssh-from-a-linux-system-to-a-windows-system](https://superuser.com/questions/1476553/passwordless-ssh-from-a-linux-system-to-a-windows-system)
     
 -   [https://superuser.com/questions/1407020/logging-into-windows-10-openssh-server-with-administrator-account-and-public-key/1407042#1407042](https://superuser.com/questions/1407020/logging-into-windows-10-openssh-server-with-administrator-account-and-public-key/1407042#1407042)
@@ -167,6 +165,6 @@ Below are all of the sources I made use of during this project (in no particular
     
 -   [https://adamtheautomator.com/powershell-read-text-file/](https://adamtheautomator.com/powershell-read-text-file/)
     
-- **[https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement](https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement)**
+- [https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement](https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_keymanagement)
 
-- **[https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/new-pssession?view=powershell-7.3](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/new-pssession?view=powershell-7.3)**
+- [https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/new-pssession?view=powershell-7.3](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/new-pssession?view=powershell-7.3)

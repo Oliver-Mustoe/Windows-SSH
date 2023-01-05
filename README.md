@@ -4,7 +4,7 @@
 3. [Installation](#installation)
 4. [Manual-Installation](#manual-installation)
 5. [Troubleshooting](#troubleshooting)
-6. [Sources](sources.md)
+6. [Sources](https://github.com/Oliver-Mustoe/Windows-SSH/blob/main/Sources.md)
 ## Project Description
 Automate the installation of OpenSSH for a Windows host from a Linux environment, and optionally, setup passwordless SSH on the Windows host for ONE Linux host
 
