@@ -19,7 +19,6 @@ function main {
     # Create a session on a remote host
     #$cred=Get-Credential -Message "Credentials are required for access (For Domain account: ‘Domain\User’)."
     $cred=Get-Credential -UserName $cred_user
-    $local_session=New-PSSession
     $remote_session=New-PSSession -ComputerName $remote_ip -Credential $cred -Authentication Negotiate
 
     Write-Output "[Connecting to $remote_ip]..."
@@ -35,7 +34,7 @@ function main {
             PasswordLessSSH -remote_session $remote_session
 
             Write-Output "Should now be able to connect with passwordless SSH after running the following:"
-            Write-Output "eval \$(ssh-agent)"
+            Write-Output "eval `$(ssh-agent)"
             Write-Output "ssh-add -t 20000 # 2000 can be changed to any number you want"
             Write-Output "ssh $cred_user@$remote_ip"
         }
@@ -130,7 +129,7 @@ function PasswordLessSSH {
     # Maybe instead of above^
     # $local_ssh_key=Get-content -Path "ssh/id_rsa.pub"
 
-    scp ssh/id_rsa.pub ($cred_user + "@" + $remote_ip)
+    Set-SCPItem -ComputerName $remote_ip -Credential $cred -Path ssh/id_rsa.pub -Destination ($env:ProgramData + "\ssh\administrators_authorized_keys")
 
     Write-Output "[Connecting to the target]..."
     Invoke-Command -Session $remote_session -ScriptBlock {
