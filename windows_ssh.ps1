@@ -129,7 +129,7 @@ function PasswordLessSSH {
     # Maybe instead of above^
     # $local_ssh_key=Get-content -Path "ssh/id_rsa.pub"
     try {
-    Set-SCPItem -ComputerName $remote_ip -Credential $cred -Path ssh/id_rsa.pub -Destination ($env:ProgramData + "\ssh\") -Force
+    Set-SCPItem -ComputerName $remote_ip -Credential $cred -Path ssh/id_rsa.pub -Destination "C:\ProgramData\ssh\" -Force
 
     Write-Output "[Connecting to the target]..."
     Invoke-Command -Session $remote_session -ScriptBlock {

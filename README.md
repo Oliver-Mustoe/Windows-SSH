@@ -5,6 +5,8 @@ Automate the installation of OpenSSH for a Windows host from a Linux environment
 ## Prerequisites
 1. A sudo user with an RSA key pair (run ```ssh-keygen -t rsa```)
 2. Docker installed
+3. A Windows host & an administrative user on it
+4. Windows installation on the ```C:``` Drive (if not the case, requires edits to "windows_ssh.ps1")
 
 ## Installation
 1. Clone this github repository with ```git clone https://github.com/Oliver-Mustoe/Windows-SSH.git```
