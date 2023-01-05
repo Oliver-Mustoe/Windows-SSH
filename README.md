@@ -49,7 +49,7 @@ Set-SCPItem -ComputerName $remote_ip -Credential $cred -Path "ssh/id_rsa.pub" -D
 ```
 * **Multiple Linux hosts need passwordless SSH onto Windows target**
 	* In this scenario, base script can be ran and for anymore Linux hosts that need access their RSA public key will need to be copied over to the target and APPENDED to the "administrators_authorized_keys" file.
-* **Problems with downloading OpenSSH onto the target/Out of data OpenSSH**
+* **Problems with downloading OpenSSH onto the target/Out of date OpenSSH**
 	* Because the package is grabbed directly from Github, it may be required in the future to update the link to the package. To do so, update the following line in "windows_ssh.ps1" via checking these [OpenSSH releases](https://github.com/PowerShell/Win32-OpenSSH/releases):
 ```powershell
 $repo="https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.1.0.0p1-Beta/OpenSSH-Win64.zip"
