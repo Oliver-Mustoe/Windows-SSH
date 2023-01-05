@@ -19,6 +19,7 @@ function main {
     # Create a session on a remote host
     #$cred=Get-Credential -Message "Credentials are required for access (For Domain account: ‘Domain\User’)."
     $cred=Get-Credential -UserName $cred_user
+    $local_session=New-PSSession
     $remote_session=New-PSSession -ComputerName $remote_ip -Credential $cred -Authentication Negotiate
 
     Write-Output "[Connecting to $remote_ip]..."
@@ -71,14 +72,14 @@ function InstallSSH {
 
             Write-Output "[Installing SSH]..."
             # Extract the SSH zip to the targets program files environmental variable ($env:)
-            # Expand-Archive -Path $repo_dest -DestinationPath $env:ProgramFiles
-            Expand-Archive -Path $repo_dest -DestinationPath "C:\Program Files"
+            Expand-Archive -Path $repo_dest -DestinationPath $env:ProgramFiles
+            # Expand-Archive -Path $repo_dest -DestinationPath "C:\Program Files"
             
             # Set appropriate exection policy (scope is just process, so once powershell session is closed, will be reset to default)
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Unrestricted -Force
             # Use the SSH install script ("". filename" can be used to run scripts in powershell and bash, who knew *shrug*)
-            # . ($env:ProgramFiles + "\OpenSSH-Win64\install-sshd.ps1")
-            . "C:\Program Files\OpenSSH-Win64\install-sshd.ps1"
+            . ($env:ProgramFiles + "\OpenSSH-Win64\install-sshd.ps1")
+            # . "C:\Program Files\OpenSSH-Win64\install-sshd.ps1"
 
             Write-Output "[DONE]..."
 
@@ -108,7 +109,7 @@ function InstallSSH {
         
         # Test to ensure that SSH install is complete in the expected directory
         #if (Test-Path "C:\ProgramData\ssh\ssh_host_rsa_key") {
-        if (Test-Path "C:\ProgramData\ssh\ssh_host_rsa_key") {
+        if (Test-Path ($env:ProgramData + "\ssh\ssh_host_rsa_key")) {
             Write-Output "[SSH CONFIG COMPLETE]"
         }
         else {
@@ -123,23 +124,36 @@ function PasswordLessSSH {
     )
     
     Write-Output "[Copying public key over to target]..."
-    # Copy public SSH key to Windows host
-    Copy-Item -Path "ssh/id_rsa.pub" -Destination "C:\ProgramData\ssh" -ToSession $remote_session -Force
+    # Copy public SSH key to Windows host -- CURRENT SOURCE OF MY WOES BELOW (seems to only break sometimes)
+    # Copy-Item -Path "ssh/id_rsa.pub" -Destination "C:\ProgramData\ssh" -ToSession $remote_session -Force
+
+    # Maybe instead of above^
+    # $local_ssh_key=Get-content -Path "ssh/id_rsa.pub"
+
+    scp ssh/id_rsa.pub ($cred_user + "@" + $remote_ip)
 
     Write-Output "[Connecting to the target]..."
     Invoke-Command -Session $remote_session -ScriptBlock {
         Write-Output "[Creating a authorized key with permissions]..."
+
+        $auth_keys=$env:ProgramData + "\ssh\administrators_authorized_keys"
         # Copy the public key to programdata
-        Get-Content "C:\ProgramData\ssh\id_rsa.pub" >> "C:\ProgramData\ssh\administrators_authorized_keys"
+        # Get-Content "C:\ProgramData\ssh\id_rsa.pub" >> "C:\ProgramData\ssh\administrators_authorized_keys"
+        Copy-Item -Path "id_rsa.pub" -Destination $auth_keys
+
 
         # Set proper access control on the key
-        icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
-        icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /remove "NT AUTHORITY\Authenticated Users"
+        # icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
+        # icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /remove "NT AUTHORITY\Authenticated Users"
+        icacls.exe $auth_keys /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
+        icacls.exe $auth_keys /remove "NT AUTHORITY\Authenticated Users"
+
         Write-Output "[Restarting SSH and cleaning up]..."
         # Restart Services
         Restart-Service -Name sshd -Force
 
-        Remove-Item -Path "C:\ProgramData\ssh\id_rsa.pub" -Force
+        Remove-Item -Path "id_rsa.pub" -Force
+
     }
 
     Write-Output "[PASSWORDLESS SSH COMPLETE]..."
