@@ -33,10 +33,6 @@ function main {
 
             PasswordLessSSH -remote_session $remote_session
 
-            Write-Output "Should now be able to connect with passwordless SSH after running the following:"
-            Write-Output "eval `$(ssh-agent)"
-            Write-Output "ssh-add -t 20000 # 2000 can be changed to any number you want"
-            Write-Output "ssh $cred_user@$remote_ip"
         }
         else {
             Write-Output "ERROR: No SSH public key found mounted in the container"
@@ -52,7 +48,7 @@ function InstallSSH {
     param(
         $remote_session
     )
-
+    try {
     Invoke-Command -Session $remote_session -ScriptBlock {
         # Install OpenSSH, does not install if ssh key is in the expected directory
         # if (!(Test-Path "C:\ProgramData\ssh\ssh_host_rsa_key")) {
@@ -115,6 +111,10 @@ function InstallSSH {
             Write-Output "[SSH CONFIG FAILED :(]"
         }
     }
+    }
+    catch {
+        Write-Output "ERROR HAS OCCURED"
+    }
 }
 
 function PasswordLessSSH {
@@ -128,7 +128,7 @@ function PasswordLessSSH {
 
     # Maybe instead of above^
     # $local_ssh_key=Get-content -Path "ssh/id_rsa.pub"
-
+    try {
     Set-SCPItem -ComputerName $remote_ip -Credential $cred -Path ssh/id_rsa.pub -Destination ($env:ProgramData + "\ssh\administrators_authorized_keys")
 
     Write-Output "[Connecting to the target]..."
@@ -154,7 +154,15 @@ function PasswordLessSSH {
         Remove-Item -Path "id_rsa.pub" -Force
 
     }
-
+    
     Write-Output "[PASSWORDLESS SSH COMPLETE]..."
+    Write-Output "Should now be able to connect with passwordless SSH after running the following:"
+    Write-Output "eval `$(ssh-agent)"
+    Write-Output "ssh-add -t 20000 # 2000 can be changed to any number you want"
+    Write-Output "ssh $cred_user@$remote_ip"
+    }
+    catch {
+        Write-Output "ERROR HAS OCCURED"
+    }
 }
 main
